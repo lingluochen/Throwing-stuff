@@ -26,7 +26,7 @@ public class throwAway : MonoBehaviour
         {
             throwCounter += 1;
         }
-        if (throwCounter > 5)
+        if (throwCounter > 10)
         {
             throwing = false;
             throwCounter = 0;
@@ -46,6 +46,7 @@ public class throwAway : MonoBehaviour
                 ballP.approached = false;
                 inHand = true;
                 handBall = thisBall;
+                throwing = true;
             }
         }
         if (picked && inHand && handBall != null)
@@ -57,7 +58,19 @@ public class throwAway : MonoBehaviour
                 rb.isKinematic = false;
                 handBall.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane + 1));
                 handBall.transform.parent = null;
-                rb.AddForce(transform.forward * 15, ForceMode.Impulse);
+                picked ballP = handBall.GetComponent<picked>();
+                ballP.thrown = true;
+                handBall = null;
+                inHand = false;
+                throwing = true;
+            }
+            if (Input.GetKeyDown(KeyCode.E) && !throwing)
+            {
+                picked = false;
+                Rigidbody rb = thisBall.GetComponent<Rigidbody>();
+                rb.isKinematic = false;
+                handBall.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane + 2));
+                handBall.transform.parent = null;
                 handBall = null;
                 inHand = false;
                 throwing = true;
@@ -67,6 +80,16 @@ public class throwAway : MonoBehaviour
 
 
     private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "pickup" && !picked && !inHand && !throwing)
+        {
+            picked p = other.gameObject.GetComponent<picked>();
+            p.approached = true;
+            thisBall = other.gameObject;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag == "pickup" && !picked && !inHand && !throwing)
         {
