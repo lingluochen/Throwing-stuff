@@ -20,17 +20,11 @@ public class throwAway : MonoBehaviour
     }
 
     // Update is called once per frame
+
+    
     void Update()
     {
-        if (throwing)
-        {
-            throwCounter += 1;
-        }
-        if (throwCounter > 10)
-        {
-            throwing = false;
-            throwCounter = 0;
-        }
+
 
         if (!picked && thisBall != null && !inHand)
         {
@@ -69,7 +63,7 @@ public class throwAway : MonoBehaviour
                 picked = false;
                 Rigidbody rb = thisBall.GetComponent<Rigidbody>();
                 rb.isKinematic = false;
-                handBall.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane + 2));
+                handBall.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z) + transform.forward;
                 handBall.transform.parent = null;
                 handBall = null;
                 inHand = false;
@@ -77,7 +71,18 @@ public class throwAway : MonoBehaviour
             }
         }
     }
-
+    void FixedUpdate()
+    {
+        if (throwing)
+        {
+            throwCounter += 1;
+        }
+        if (throwCounter > 10)
+        {
+            throwing = false;
+            throwCounter = 0;
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {

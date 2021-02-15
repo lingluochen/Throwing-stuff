@@ -4,25 +4,37 @@ using UnityEngine;
 
 public class TriggerDoorController : MonoBehaviour
 {
-    [SerializeField] private Animator myDoor = null;
-    [SerializeField] private bool openTrigger = false;
-    [SerializeField] private bool closeTrigger = false;
+    public GameObject myDoor = null;
+    private Animator anim;
+    public bool open = false;
+    public bool opened = false;
+    AnimatorClipInfo[] m_CurrentClipInfo;
+    void Start()
+    {
+        anim = myDoor.GetComponent<Animator>();
+    }
+    void Update()
+    {
+        if (open)
+        {
+
+            anim.SetBool("open", true);
+            //gameObject.SetActive(false);
+            m_CurrentClipInfo = anim.GetCurrentAnimatorClipInfo(0);
+            string m_ClipName = m_CurrentClipInfo[0].clip.name;
+            if (m_ClipName == "DoorClose" && opened == false)
+            {
+                myDoor.transform.rotation = Quaternion.Euler(0, -90, 0);;
+                opened = true;
+            }
+
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-       if(other.CompareTag("pickup"))
-        {
-            if(openTrigger)
-            {
-                myDoor.Play("DoorOpen", 0, 0.0f);
-                //gameObject.SetActive(false);
-            }
-
-            else if (closeTrigger)
-            {
-                myDoor.Play("DoorClose", 0, 0.0f);
-               // gameObject.SetActive(false);
-            }
+        if (other.CompareTag("pickup")){
+            open = true; 
         }
     }
 }
